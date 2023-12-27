@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using BeatsSenderBot.Helpers;
+using System.Text.Json;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
@@ -16,7 +17,6 @@ namespace BeatsSenderBot
                 var message = update.Message;
                 var userName = message.Chat.Username;
 
-
                 if (message.Text.ToLower() == "/start")
                 {
                     var inlineKeyBoard = new InlineKeyboardMarkup(
@@ -32,13 +32,22 @@ namespace BeatsSenderBot
                             },
                             new[]
                             {
-                                InlineKeyboardButton.WithCallbackData(text: "Рассылка", callbackData: "mailing")
+                                InlineKeyboardButton.WithCallbackData(text: "Разослать", callbackData: "mailing")
                             }
                         });
 
                     await botClient.SendTextMessageAsync(message.Chat.Id, $"Пользователь {userName} запустил бота!", replyMarkup: inlineKeyBoard);
 
                     Console.WriteLine($"Сообщение отправлено. Username пользователя: {userName}");
+                }
+            }
+            if (update.Type == UpdateType.CallbackQuery)
+            {
+                var buttonCode = update.CallbackQuery.Data;
+
+                if (buttonCode == "mailing")
+                {
+                    EmailHelper.SendEmail();
                 }
             }
         }
