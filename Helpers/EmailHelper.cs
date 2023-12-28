@@ -10,18 +10,7 @@ namespace BeatsSenderBot.Helpers
         {
             try
             {
-                var message = new MimeMessage();
-                message.From.Add(new MailboxAddress("From", "blacksilverforg00gle@gmail.com"));
-                message.To.Add(new MailboxAddress("blacksilver@ro.ru", "blacksilver@ro.ru"));
-                message.Subject = "Cooбщение от BeatsSenderBot";
-
-                //TODO https://stackoverflow.com/questions/37853903/can-i-send-files-via-email-using-mailkit
-                // Добавление вложения в письмо
-
-                message.Body = new TextPart("plain")
-                {
-                    Text = @"Тестовое письмо от BeatsSenderBot без вложений"
-                };
+                var message = CreateMessage();
 
                 using (var client = new SmtpClient())
                 {
@@ -35,6 +24,26 @@ namespace BeatsSenderBot.Helpers
             {
                 throw new Exception($"При отправке писем произошла ошибка: '{e.Message}'");
             }
+        }
+
+        private static MimeMessage CreateMessage()
+        {
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("From", "blacksilverforg00gle@gmail.com"));
+            message.To.Add(new MailboxAddress("blacksilver@ro.ru", "blacksilver@ro.ru"));
+            message.Subject = "Cooбщение от BeatsSenderBot";
+            message.Body = CreateMessageBody();
+
+            return message;
+        }
+
+        private static MimeEntity CreateMessageBody()
+        {
+            var bodyBuilder = new BodyBuilder();
+            bodyBuilder.TextBody = "Тестовое письмо от BeatsSenderBot с вложением";
+            bodyBuilder.Attachments.Add(@"C:\\Users\\Andrew\\Desktop\\BeatSender.txt");
+
+            return bodyBuilder.ToMessageBody();
         }
     }
 }
