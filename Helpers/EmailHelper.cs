@@ -6,11 +6,11 @@ namespace BeatsSenderBot.Helpers
 {
     public static class EmailHelper
     {
-        public static void SendEmail()
+        public static void SendEmail(string filePath)
         {
             try
             {
-                var message = CreateMessage();
+                var message = CreateMessage(filePath);
 
                 using (var client = new SmtpClient())
                 {
@@ -26,22 +26,22 @@ namespace BeatsSenderBot.Helpers
             }
         }
 
-        private static MimeMessage CreateMessage()
+        private static MimeMessage CreateMessage(string filePath)
         {
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress("From", "blacksilverforg00gle@gmail.com"));
             message.To.Add(new MailboxAddress("blacksilver@ro.ru", "blacksilver@ro.ru"));
             message.Subject = "Cooбщение от BeatsSenderBot";
-            message.Body = CreateMessageBody();
+            message.Body = CreateMessageBody(filePath);
 
             return message;
         }
 
-        private static MimeEntity CreateMessageBody()
+        private static MimeEntity CreateMessageBody(string filePath)
         {
             var bodyBuilder = new BodyBuilder();
             bodyBuilder.TextBody = "Тестовое письмо от BeatsSenderBot с вложением";
-            bodyBuilder.Attachments.Add(@"C:\\Users\\Andrew\\Desktop\\BeatSender.txt");
+            bodyBuilder.Attachments.Add(filePath);
 
             return bodyBuilder.ToMessageBody();
         }
