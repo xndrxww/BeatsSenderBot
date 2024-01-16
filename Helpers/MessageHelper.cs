@@ -1,6 +1,7 @@
 ﻿using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
+using File = System.IO.File;
 
 namespace BeatsSenderBot.Helpers
 {
@@ -35,7 +36,7 @@ namespace BeatsSenderBot.Helpers
             var file = await botClient.GetFileAsync(message.Document.FileId);
 
             var folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files");
-            var fileName = "BeatSender.txt";
+            var fileName = $"BeatSenderFile_{Guid.NewGuid()}.txt";
             var filePath = Path.Combine(folderPath, fileName);
 
             try
@@ -53,6 +54,16 @@ namespace BeatsSenderBot.Helpers
             {
                 await botClient.SendTextMessageAsync(message.Chat.Id, "При загрузке/отправке файла произошла ошибка");
                 Console.WriteLine($"Ошибка при загрузке файла {e}");
+            }
+            finally
+            {
+                string[] filePaths = Directory.GetFiles(folderPath);
+
+                foreach (var fp in filePaths)
+                {
+                    if (File.Exists(fp))
+                        File.Delete(fp);
+                }
             }
         }
     }
