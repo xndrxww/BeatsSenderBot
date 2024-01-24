@@ -5,7 +5,6 @@ using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BeatsSenderBot
 {
@@ -18,54 +17,43 @@ namespace BeatsSenderBot
             if (update.Type == UpdateType.Message)
             {
                 var message = update.Message;
+                var chatId = message.Chat.Id;
 
                 if (message.Text?.ToLower() == "/start")
                 {
-                    InlineKeyboardHelper.SendStartMessage(botClient, message);
+                    KeyboardHelper.StartMessageButtons(botClient, chatId);
+                }
+
+                //Сохранение прикрепленных файлов
+                if (message.Type == MessageType.Audio)
+                {
+                    var emailState = GetEmailState(chatId);
+
+                    if (emailState == EmailState.AwaitAttachments)
+                    {
+                        await AttachmentHelper.SaveAttachmentFile(botClient, message);
+                        SaveEmailState(chatId, EmailState.AwaitSendAttachments);
+                        KeyboardHelper.SendEmailButtons(botClient, chatId);
+                    }
                 }
             }
             if (update.Type == UpdateType.CallbackQuery)
             {
                 var buttonCode = update.CallbackQuery.Data;
+                var chatId = update.CallbackQuery.Message.Chat.Id;
+                var emailState = GetEmailState(chatId);
 
-                if (buttonCode == "mailing")
+                if (buttonCode == "mailing") //Нажатие на кнопку "Рассылка"
                 {
-                    var chatId = update.CallbackQuery.Message.Chat.Id;
-
-                    var emailState = GetEmailState(chatId);
-
-                    switch (emailState)
-                    {
-                        case EmailState.AwaitAttacments:
-                            await botClient.SendTextMessageAsync(chatId, "Прикрепите файлы для рассылки");
-                            SaveEmailState(chatId, EmailState.AwaitSendAttachmennts);
-                            break;
-                        case EmailState.AwaitSendAttachmennts:
-                            {
-                                var inlineKeyBoard = new InlineKeyboardMarkup(
-                                    new[]
-                                    {
-                                    new[]
-                                    {
-                                        InlineKeyboardButton.WithCallbackData(text: "Отправить прикрепленные файлы", callbackData: "sendAttachmennts"),
-                                    }
-                                    });
-
-                                await botClient.SendTextMessageAsync(chatId, "тест", replyMarkup: inlineKeyBoard);
-                                SaveEmailState(chatId, EmailState.Completed);
-                                break;
-                            }
-                        case EmailState.Completed:
-                            await botClient.SendTextMessageAsync(chatId, "Прикрепленные файлы отправлены!");
-                            ResetUserState(chatId);
-                            break;
-
-
-                    }
+                    await botClient.SendTextMessageAsync(chatId, "Прикрепите файлы для рассылки");
+                    SaveEmailState(chatId, EmailState.AwaitAttachments);
                 }
-                if (buttonCode == "sendAttachmennts")
+
+                if (buttonCode == "sendAttachments" && emailState == EmailState.AwaitSendAttachments) //Нажатие на кнопку "Отправить"
                 {
-                    EmailHelper.SendAttachmennts();
+                    EmailHelper.SendAttachments();
+                    ResetEmailState(chatId);
+                    KeyboardHelper.StartMessageButtons(botClient, chatId);
                 }
             }
         }
@@ -80,7 +68,7 @@ namespace BeatsSenderBot
             if (emailState.ContainsKey(chatId))
                 return emailState[chatId];
 
-            return EmailState.AwaitAttacments;
+            return EmailState.AwaitAttachments;
         }
 
         private static void SaveEmailState(long chatId, EmailState state)
@@ -88,7 +76,7 @@ namespace BeatsSenderBot
             emailState[chatId] = state;
         }
 
-        private static void ResetUserState(long chatId)
+        private static void ResetEmailState(long chatId)
         {
             emailState.Remove(chatId);
         }

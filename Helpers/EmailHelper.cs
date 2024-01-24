@@ -8,7 +8,7 @@ namespace BeatsSenderBot.Helpers
     {
         private static readonly string FolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files");
 
-        public static void SendAttachmennts()
+        public static void SendAttachments()
         {
             var filePaths = Directory.GetFiles(FolderPath);
 

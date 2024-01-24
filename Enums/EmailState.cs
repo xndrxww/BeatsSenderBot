@@ -2,8 +2,7 @@
 {
     public enum EmailState
     {
-        AwaitAttacments,
-        AwaitSendAttachmennts,
-        Completed
+        AwaitAttachments,
+        AwaitSendAttachments
     }
 }

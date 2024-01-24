@@ -9,11 +9,13 @@ namespace BeatsSenderBot.Helpers
 
         public static async Task SaveAttachmentFile(ITelegramBotClient botClient, Message message)
         {
+            var chatId = message.Chat.Id;
+
             try
             {
-                var file = await botClient.GetFileAsync(message.Document.FileId);
+                var file = await botClient.GetFileAsync(message.Audio.FileId);
 
-                var fileName = $"BeatSenderFile_{Guid.NewGuid()}.txt";
+                var fileName = $"BeatSenderFile_{Guid.NewGuid()}.mp3";
                 var filePath = Path.Combine(FolderPath, fileName);
 
                 using (var fs = new FileStream(filePath, FileMode.Create))
@@ -23,7 +25,7 @@ namespace BeatsSenderBot.Helpers
             }
             catch (Exception e)
             {
-                await botClient.SendTextMessageAsync(message.Chat.Id, "При загрузке файла произошла ошибка");
+                await botClient.SendTextMessageAsync(chatId, "При загрузке файла произошла ошибка");
                 Console.WriteLine($"Ошибка при загрузке файла: '{e}'");
             }
         }
