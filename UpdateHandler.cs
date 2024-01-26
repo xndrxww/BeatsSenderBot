@@ -51,7 +51,7 @@ namespace BeatsSenderBot
 
                 if (buttonCode == "sendAttachments" && emailState == EmailState.AwaitSendAttachments) //Нажатие на кнопку "Отправить"
                 {
-                    EmailHelper.SendAttachments();
+                    EmailHelper.SendAttachments(chatId);
                     ResetEmailState(chatId);
                     KeyboardHelper.StartMessageButtons(botClient, chatId);
                 }

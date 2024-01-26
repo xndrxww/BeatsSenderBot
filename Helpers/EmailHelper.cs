@@ -6,18 +6,12 @@ namespace BeatsSenderBot.Helpers
 {
     public static class EmailHelper
     {
-        private static readonly string FolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files");
+        private static readonly string FilesFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files");
 
-        public static void SendAttachments()
+        public static void SendAttachments(long chatId)
         {
-            var filePaths = Directory.GetFiles(FolderPath);
+            var filePaths = Directory.GetFiles(Path.Combine(FilesFolderPath, chatId.ToString()));
 
-            SendEmail(filePaths);
-            RemoveFiles(filePaths);
-        }
-
-        private static void SendEmail(string[] filePaths)
-        {
             try
             {
                 var message = CreateMessage(filePaths);
@@ -33,6 +27,10 @@ namespace BeatsSenderBot.Helpers
             catch (Exception e)
             {
                 throw new Exception($"При отправке писем произошла ошибка: '{e.Message}'");
+            }
+            finally
+            {
+                Directory.Delete(Path.Combine(FilesFolderPath, chatId.ToString()), true);
             }
         }
 
@@ -58,15 +56,6 @@ namespace BeatsSenderBot.Helpers
             }
 
             return bodyBuilder.ToMessageBody();
-        }
-
-        private static void RemoveFiles(string[] filePaths)
-        {
-            foreach (var fp in filePaths)
-            {
-                if (File.Exists(fp))
-                    File.Delete(fp);
-            }
         }
     }
 }
