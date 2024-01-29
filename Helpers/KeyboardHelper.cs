@@ -38,5 +38,22 @@ namespace BeatsSenderBot.Helpers
                 });
             await botClient.SendTextMessageAsync(chatId, "Выберите действие", replyMarkup: inlineKeyBoard);
         }
+
+        public static async void SendAttachmentButtons(ITelegramBotClient botClient, long chatId)
+        {
+            var inlineKeyBoard = new InlineKeyboardMarkup(
+                new[]
+                {
+                    new[]
+                    {
+                        InlineKeyboardButton.WithCallbackData(text: "Продолжить", callbackData: "continue"),
+                    },
+                    new[]
+                    {
+                        InlineKeyboardButton.WithCallbackData(text: "Прикрепить ещё", callbackData: "addMoreAttachments"),
+                    }
+                });
+            await botClient.SendTextMessageAsync(chatId, "Файл прикреплён", replyMarkup: inlineKeyBoard);
+        }
     }
 }

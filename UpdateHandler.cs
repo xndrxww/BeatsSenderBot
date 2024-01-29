@@ -24,16 +24,15 @@ namespace BeatsSenderBot
                     KeyboardHelper.StartMessageButtons(botClient, chatId);
                 }
 
-                //Сохранение прикрепленных файлов
-                if (message.Type == MessageType.Audio)
+                if (message.Type == MessageType.Audio) //Сохранение прикрепленных файлов
                 {
                     var emailState = GetEmailState(chatId);
+                    var fileName = update.Message.Audio.FileName;
 
                     if (emailState == EmailState.AwaitAttachments)
                     {
-                        await AttachmentHelper.SaveAttachmentFile(botClient, message);
-                        SaveEmailState(chatId, EmailState.AwaitSendAttachments);
-                        KeyboardHelper.SendEmailButtons(botClient, chatId);
+                        await AttachmentHelper.SaveAttachmentFile(botClient, message, fileName);
+                        KeyboardHelper.SendAttachmentButtons(botClient, chatId);
                     }
                 }
             }
@@ -54,6 +53,17 @@ namespace BeatsSenderBot
                     EmailHelper.SendAttachments(chatId);
                     ResetEmailState(chatId);
                     KeyboardHelper.StartMessageButtons(botClient, chatId);
+                }
+
+                if (buttonCode == "continue")
+                {
+                    SaveEmailState(chatId, EmailState.AwaitSendAttachments);
+                    KeyboardHelper.SendEmailButtons(botClient, chatId);
+                }
+
+                if (buttonCode == "addMoreAttachments")
+                {
+                    await botClient.SendTextMessageAsync(chatId, "Прикрепите файлы для рассылки");
                 }
             }
         }

@@ -7,7 +7,7 @@ namespace BeatsSenderBot.Helpers
     {
         private static readonly string FilesFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files");
 
-        public static async Task SaveAttachmentFile(ITelegramBotClient botClient, Message message)
+        public static async Task SaveAttachmentFile(ITelegramBotClient botClient, Message message, string fileName)
         {
             var chatId = message.Chat.Id;
 
@@ -21,7 +21,7 @@ namespace BeatsSenderBot.Helpers
                     Directory.CreateDirectory(folderPath);
                 }
 
-                var filePath = Path.Combine(folderPath, $"{Guid.NewGuid()}.mp3");
+                var filePath = Path.Combine(folderPath, $"{fileName}.mp3");
 
                 using (var fs = new FileStream(filePath, FileMode.Create))
                 {
