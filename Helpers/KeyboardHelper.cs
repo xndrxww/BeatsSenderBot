@@ -12,15 +12,15 @@ namespace BeatsSenderBot.Helpers
                 {
                     new[]
                     {
-                        InlineKeyboardButton.WithCallbackData(text: "Почты", callbackData: "email"),
+                        InlineKeyboardButton.WithCallbackData(text: "Почты \ud83d\udcc4", callbackData: "email"),
                     },
                     new[]
                     {
-                        InlineKeyboardButton.WithCallbackData(text: "Авторизация", callbackData: "authorization"),
+                        InlineKeyboardButton.WithCallbackData(text: "Авторизация \ud83d\udcad", callbackData: "authorization"),
                     },
                     new[]
                     {
-                        InlineKeyboardButton.WithCallbackData(text: "Рассылка", callbackData: "mailing")
+                        InlineKeyboardButton.WithCallbackData(text: "Рассылка \ud83d\udce7", callbackData: "mailing")
                     }
                 });
             await botClient.SendTextMessageAsync(chatId, "Выберите действие", replyMarkup: inlineKeyBoard);
@@ -33,27 +33,27 @@ namespace BeatsSenderBot.Helpers
                 {
                     new[]
                     {
-                        InlineKeyboardButton.WithCallbackData(text: "Отправить", callbackData: "sendAttachments"),
+                        InlineKeyboardButton.WithCallbackData(text: "Отправить \u2705", callbackData: "sendAttachments"),
                     }
                 });
             await botClient.SendTextMessageAsync(chatId, "Выберите действие", replyMarkup: inlineKeyBoard);
         }
 
-        public static async void SendAttachmentButtons(ITelegramBotClient botClient, long chatId)
+        public static async void SendAttachmentButtons(ITelegramBotClient botClient, long chatId, string fileName)
         {
             var inlineKeyBoard = new InlineKeyboardMarkup(
                 new[]
                 {
                     new[]
                     {
-                        InlineKeyboardButton.WithCallbackData(text: "Продолжить", callbackData: "continue"),
+                        InlineKeyboardButton.WithCallbackData(text: "Продолжить \u25b6", callbackData: "continue"),
                     },
                     new[]
                     {
-                        InlineKeyboardButton.WithCallbackData(text: "Прикрепить ещё", callbackData: "addMoreAttachments"),
+                        InlineKeyboardButton.WithCallbackData(text: "Прикрепить ещё \u2795", callbackData: "addMoreAttachments"),
                     }
                 });
-            await botClient.SendTextMessageAsync(chatId, "Файл прикреплён", replyMarkup: inlineKeyBoard);
+            await botClient.SendTextMessageAsync(chatId, $"Файл '{fileName}' успешно прикреплён", replyMarkup: inlineKeyBoard);
         }
     }
 }

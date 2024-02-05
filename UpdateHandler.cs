@@ -32,7 +32,7 @@ namespace BeatsSenderBot
                     if (emailState == EmailState.AwaitAttachments)
                     {
                         await AttachmentHelper.SaveAttachmentFile(botClient, message, fileName);
-                        KeyboardHelper.SendAttachmentButtons(botClient, chatId);
+                        KeyboardHelper.SendAttachmentButtons(botClient, chatId, fileName);
                     }
                 }
             }
@@ -52,6 +52,7 @@ namespace BeatsSenderBot
                 {
                     EmailHelper.SendAttachments(chatId);
                     ResetEmailState(chatId);
+                    await botClient.SendTextMessageAsync(chatId, "Письмо отправлено!");
                     KeyboardHelper.StartMessageButtons(botClient, chatId);
                 }
 
