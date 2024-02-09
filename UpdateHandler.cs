@@ -35,6 +35,11 @@ namespace BeatsSenderBot
                         KeyboardHelper.SendAttachmentButtons(botClient, chatId, fileName);
                     }
                 }
+
+                if (message.Type == MessageType.Document)
+                {
+                    //TODO
+                }
             }
             if (update.Type == UpdateType.CallbackQuery)
             {
@@ -42,6 +47,7 @@ namespace BeatsSenderBot
                 var chatId = update.CallbackQuery.Message.Chat.Id;
                 var emailState = GetEmailState(chatId);
 
+                #region Обработка кнопок раздела "Рассылка"
                 if (buttonCode == "mailing") //Нажатие на кнопку "Рассылка"
                 {
                     await botClient.SendTextMessageAsync(chatId, "Прикрепите файлы для рассылки");
@@ -56,16 +62,25 @@ namespace BeatsSenderBot
                     KeyboardHelper.StartMessageButtons(botClient, chatId);
                 }
 
-                if (buttonCode == "continue")
+                if (buttonCode == "continue") //Нажатие на кнопку "Продолжить"
                 {
                     SaveEmailState(chatId, EmailState.AwaitSendAttachments);
                     KeyboardHelper.SendEmailButtons(botClient, chatId);
                 }
 
-                if (buttonCode == "addMoreAttachments")
+                if (buttonCode == "addMoreAttachments") //Нажатие на кнопку "Прикрепить ещё"
                 {
                     await botClient.SendTextMessageAsync(chatId, "Прикрепите файлы для рассылки");
                 }
+                #endregion
+
+                #region Обработка кнопок раздела "Почты"
+                if (buttonCode == "email") //Нажатие на кнопку "Почты"
+                {
+                    await botClient.SendTextMessageAsync(chatId, "Прикрепите текстовый файл со списком почт для рассылки");
+                }
+                #endregion
+
             }
         }
 
@@ -74,6 +89,7 @@ namespace BeatsSenderBot
             Console.WriteLine($"Произошла ошибка: {JsonSerializer.Serialize(exception)}");
         }
 
+        #region Состояние "Рассылка"
         private static EmailState GetEmailState(long chatId)
         {
             if (emailState.ContainsKey(chatId))
@@ -91,5 +107,7 @@ namespace BeatsSenderBot
         {
             emailState.Remove(chatId);
         }
+        #endregion
+
     }
 }

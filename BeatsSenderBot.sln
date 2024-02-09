@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeatsSenderBot", "BeatsSenderBot.csproj", "{D12C4752-245B-489A-A7B5-A6217B48AB13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeatsSenderBot", "BeatsSenderBot.csproj", "{D12C4752-245B-489A-A7B5-A6217B48AB13}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeatsSenderDb", "..\BeatsSenderDb\BeatsSenderDb.csproj", "{11BCCDE0-0041-4B29-8718-3A541D853A85}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{D12C4752-245B-489A-A7B5-A6217B48AB13}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D12C4752-245B-489A-A7B5-A6217B48AB13}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D12C4752-245B-489A-A7B5-A6217B48AB13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11BCCDE0-0041-4B29-8718-3A541D853A85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11BCCDE0-0041-4B29-8718-3A541D853A85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11BCCDE0-0041-4B29-8718-3A541D853A85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11BCCDE0-0041-4B29-8718-3A541D853A85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
