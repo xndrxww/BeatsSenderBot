@@ -1,5 +1,7 @@
 ﻿using BeatsSenderBot.Enums;
 using BeatsSenderBot.Helpers;
+using BeatsSenderDb.Extensions;
+using BeatsSenderDb.Models;
 using System.Text.Json;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
@@ -26,19 +28,13 @@ namespace BeatsSenderBot
 
                 if (message.Type == MessageType.Audio) //Сохранение прикрепленных файлов
                 {
-                    var emailState = GetEmailState(chatId);
-                    var fileName = update.Message.Audio.FileName;
-
-                    if (emailState == EmailState.AwaitAttachments)
-                    {
-                        await AttachmentHelper.SaveAttachmentFile(botClient, message, fileName);
-                        KeyboardHelper.SendAttachmentButtons(botClient, chatId, fileName);
-                    }
+                    await HandleAudioMessage(update, botClient);
                 }
 
                 if (message.Type == MessageType.Document)
                 {
-                    //TODO
+                    //await AttachmentHelper.SaveAttachmentFile(botClient, message, "Emails");
+                    await HadleDocumentMessage(update);
                 }
             }
             if (update.Type == UpdateType.CallbackQuery)
@@ -109,5 +105,39 @@ namespace BeatsSenderBot
         }
         #endregion
 
+        private async Task HadleDocumentMessage(Update update)
+        {
+            var message = update.Message;
+            var chatId = message.Chat.Id;
+
+            using (var dbContext = new BeatsSenderDbContext())
+            {
+                var client = dbContext.Clients.FirstOrDefault(client => client.TelegramId == chatId.ToString());
+
+                if (client == null)
+                {
+                    client = dbContext.CreateClient(chatId, message.From.Username);
+                }
+
+                //TODO добавить сохранение файла в БД
+
+                dbContext.SaveChanges();
+            }
+        }
+
+        private async Task HandleAudioMessage(Update update, ITelegramBotClient botClient)
+        {
+            var message = update.Message;
+            var chatId = message.Chat.Id;
+
+            var emailState = GetEmailState(chatId);
+            var fileName = update.Message.Audio.FileName;
+
+            if (emailState == EmailState.AwaitAttachments)
+            {
+                await AttachmentHelper.SaveAttachmentFile(botClient, message, fileName);
+                KeyboardHelper.SendAttachmentButtons(botClient, chatId, fileName);
+            }
+        }
     }
 }
