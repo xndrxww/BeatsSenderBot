@@ -1,27 +1,34 @@
-﻿using Telegram.Bot;
+﻿using BeatsSenderBot.Constants;
+using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace BeatsSenderBot.Helpers
 {
     public static class AttachmentHelper
     {
-        private static readonly string FilesFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files");
-
-        public static async Task SaveAttachmentFile(ITelegramBotClient botClient, Message message, string fileName)
+        public static async Task SaveAttachmentFile(ITelegramBotClient botClient, Message message, MessageType messageType, string fileName)
         {
             var chatId = message.Chat.Id;
 
             try
             {
-                var file = await botClient.GetFileAsync(message.Audio.FileId);
-                var folderPath = Path.Combine(FilesFolderPath, chatId.ToString());
+                var file = messageType == MessageType.Audio
+                    ? await botClient.GetFileAsync(message.Audio.FileId)
+                    : await botClient.GetFileAsync(message.Document.FileId);
+
+                var folderName = messageType == MessageType.Audio
+                    ? FolderConstants.BeatsFolderName
+                    : FolderConstants.EmailsFolderName;
+
+                var folderPath = Path.Combine(folderName, chatId.ToString());
 
                 if (!Directory.Exists(folderPath))
                 {
                     Directory.CreateDirectory(folderPath);
                 }
 
-                var filePath = Path.Combine(folderPath, $"{fileName}.mp3");
+                var filePath = Path.Combine(folderPath, fileName);
 
                 using (var fs = new FileStream(filePath, FileMode.Create))
                 {

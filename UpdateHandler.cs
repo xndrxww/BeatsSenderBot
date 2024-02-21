@@ -2,6 +2,8 @@
 using BeatsSenderBot.Helpers;
 using BeatsSenderDb.Extensions;
 using BeatsSenderDb.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
@@ -26,18 +28,17 @@ namespace BeatsSenderBot
                     KeyboardHelper.StartMessageButtons(botClient, chatId);
                 }
 
-                if (message.Type == MessageType.Audio) //Сохранение прикрепленных файлов
+                if (message.Type == MessageType.Audio) //Обработка входящего бита
                 {
-                    await HandleAudioMessage(update, botClient);
+                    await HandleIncomingAudioMessage(update, botClient);
                 }
 
-                if (message.Type == MessageType.Document)
+                if (message.Type == MessageType.Document) //Обработка входящего документа со списком почт
                 {
-                    //await AttachmentHelper.SaveAttachmentFile(botClient, message, "Emails");
-                    await HadleDocumentMessage(update);
+                    await HadleIncomingDocumentMessage(update, botClient);
                 }
             }
-            if (update.Type == UpdateType.CallbackQuery)
+            if (update.Type == UpdateType.CallbackQuery) //Обработка кнопок
             {
                 var buttonCode = update.CallbackQuery.Data;
                 var chatId = update.CallbackQuery.Message.Chat.Id;
@@ -105,12 +106,25 @@ namespace BeatsSenderBot
         }
         #endregion
 
-        private async Task HadleDocumentMessage(Update update)
+        private async Task HadleIncomingDocumentMessage(Update update, ITelegramBotClient botClient)
         {
             var message = update.Message;
             var chatId = message.Chat.Id;
+            var fileName = message.Document.FileName;
 
-            using (var dbContext = new BeatsSenderDbContext())
+            await AttachmentHelper.SaveAttachmentFile(botClient, message, MessageType.Document, fileName);
+
+            //Тестовое решение (вынести в отдельный метод)
+            var config = new ConfigurationBuilder()
+                            .AddJsonFile("appsettings.json")
+                            .Build();
+
+            var connectionString = config.GetConnectionString("ConnectionString");
+
+            var optionsBuilder = new DbContextOptionsBuilder<BeatsSenderDbContext>();
+            optionsBuilder.UseNpgsql(connectionString);
+
+            using (var dbContext = new BeatsSenderDbContext(optionsBuilder.Options))
             {
                 var client = dbContext.Clients.FirstOrDefault(client => client.TelegramId == chatId.ToString());
 
@@ -125,7 +139,7 @@ namespace BeatsSenderBot
             }
         }
 
-        private async Task HandleAudioMessage(Update update, ITelegramBotClient botClient)
+        private async Task HandleIncomingAudioMessage(Update update, ITelegramBotClient botClient)
         {
             var message = update.Message;
             var chatId = message.Chat.Id;
@@ -135,7 +149,7 @@ namespace BeatsSenderBot
 
             if (emailState == EmailState.AwaitAttachments)
             {
-                await AttachmentHelper.SaveAttachmentFile(botClient, message, fileName);
+                await AttachmentHelper.SaveAttachmentFile(botClient, message, MessageType.Audio, fileName);
                 KeyboardHelper.SendAttachmentButtons(botClient, chatId, fileName);
             }
         }

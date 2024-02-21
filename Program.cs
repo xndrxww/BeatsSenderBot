@@ -5,7 +5,7 @@ namespace BeatsSenderBot
 {
     public class Program
     {
-        private static readonly ITelegramBotClient _botClient = new TelegramBotClient("6367612655:AAH8VBioHZrYKkNPOoObXQ6ZsVgzFo9PQ8U");
+        private static readonly ITelegramBotClient _botClient = new TelegramBotClient("6367612655:AAH8VBioHZrYKkNPOoObXQ6ZsVgzFo9PQ8U"); //TODO вынести в конфиг
 
         static void Main(string[] args)
         {
