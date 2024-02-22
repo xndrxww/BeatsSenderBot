@@ -1,4 +1,5 @@
-﻿using BeatsSenderBot.Enums;
+﻿using BeatsSenderBot.Constants;
+using BeatsSenderBot.Enums;
 using BeatsSenderBot.Helpers;
 using BeatsSenderDb.Extensions;
 using BeatsSenderDb.Models;
@@ -133,7 +134,7 @@ namespace BeatsSenderBot
                     client = dbContext.CreateClient(chatId, message.From.Username);
                 }
 
-                //TODO добавить сохранение файла в БД
+                client.MailFile = GetDocument(chatId);
 
                 dbContext.SaveChanges();
             }
@@ -152,6 +153,19 @@ namespace BeatsSenderBot
                 await AttachmentHelper.SaveAttachmentFile(botClient, message, MessageType.Audio, fileName);
                 KeyboardHelper.SendAttachmentButtons(botClient, chatId, fileName);
             }
+        }
+
+        private byte[] GetDocument(long chatId)
+        {
+            var folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FolderConstants.EmailsFolderName);
+            var filePaths = Directory.GetFiles(Path.Combine(folderPath, chatId.ToString()));
+
+            if (!filePaths.Any())
+            {
+                throw new Exception($"Не удалось получить файл с почтами. Идентификатор чата: {chatId}");
+            }
+
+            return System.IO.File.ReadAllBytes(filePaths[0]);
         }
     }
 }

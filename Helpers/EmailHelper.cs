@@ -1,4 +1,5 @@
-﻿using MailKit.Net.Smtp;
+﻿using BeatsSenderBot.Constants;
+using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
 
@@ -6,11 +7,10 @@ namespace BeatsSenderBot.Helpers
 {
     public static class EmailHelper
     {
-        private static readonly string FilesFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files");
-
         public static void SendAttachments(long chatId)
         {
-            var filePaths = Directory.GetFiles(Path.Combine(FilesFolderPath, chatId.ToString()));
+            var folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FolderConstants.BeatsFolderName);
+            var filePaths = Directory.GetFiles(Path.Combine(folderPath, chatId.ToString()));
 
             try
             {
@@ -30,7 +30,7 @@ namespace BeatsSenderBot.Helpers
             }
             finally
             {
-                Directory.Delete(Path.Combine(FilesFolderPath, chatId.ToString()), true);
+                Directory.Delete(Path.Combine(folderPath, chatId.ToString()), true);
             }
         }
 
