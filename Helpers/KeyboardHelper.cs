@@ -5,6 +5,9 @@ namespace BeatsSenderBot.Helpers
 {
     public static class KeyboardHelper
     {
+        /// <summary>
+        /// Вывод списка стартовых кнопок
+        /// </summary>
         public static async void StartMessageButtons(ITelegramBotClient botClient, long chatId)
         {
             var inlineKeyBoard = new InlineKeyboardMarkup(
@@ -26,6 +29,9 @@ namespace BeatsSenderBot.Helpers
             await botClient.SendTextMessageAsync(chatId, "Выберите действие", replyMarkup: inlineKeyBoard);
         }
 
+        /// <summary>
+        /// Вывод кнопки "Отправить". Для отправки битов.
+        /// </summary>
         public static async void SendEmailButtons(ITelegramBotClient botClient, long chatId)
         {
             var inlineKeyBoard = new InlineKeyboardMarkup(

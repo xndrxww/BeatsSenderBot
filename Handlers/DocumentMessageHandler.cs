@@ -12,6 +12,9 @@ namespace BeatsSenderBot.Handlers
 {
     public static class DocumentMessageHandler
     {
+        /// <summary>
+        /// Обработка и сохранение в БД входящий файлов с почтами
+        /// </summary>
         public static async Task HandleIncomingDocumentMessage(Update update, ITelegramBotClient botClient)
         {
             var message = update.Message;

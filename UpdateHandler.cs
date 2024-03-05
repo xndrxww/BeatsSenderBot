@@ -11,7 +11,7 @@ namespace BeatsSenderBot
 {
     public class UpdateHandler : IUpdateHandler
     {
-        private static Dictionary<long, EmailState> emailStateDic = new Dictionary<long, EmailState>();
+        private static Dictionary<long, SendBeatsState> emailStateDic = new Dictionary<long, SendBeatsState>();
 
         public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {

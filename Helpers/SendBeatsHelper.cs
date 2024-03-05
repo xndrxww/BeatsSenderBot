@@ -5,9 +5,12 @@ using MimeKit;
 
 namespace BeatsSenderBot.Helpers
 {
-    public static class EmailHelper
+    public static class SendBeatsHelper
     {
-        public static void SendAttachments(long chatId)
+        /// <summary>
+        /// Рассылка битов по почтам
+        /// </summary>
+        public static void SendBeats(long chatId)
         {
             var folderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, FolderConstants.BeatsFolderName);
             var filePaths = Directory.GetFiles(Path.Combine(folderPath, chatId.ToString()));

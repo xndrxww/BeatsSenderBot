@@ -7,7 +7,10 @@ namespace BeatsSenderBot.Handlers
 {
     public static class CallbackQueryHandler
     {
-        public static async Task HandleCallbackQuery(Update update, ITelegramBotClient botClient, Dictionary<long, EmailState> emailStateDic)
+        /// <summary>
+        /// Обработка нажатий кнопок
+        /// </summary>
+        public static async Task HandleCallbackQuery(Update update, ITelegramBotClient botClient, Dictionary<long, SendBeatsState> emailStateDic)
         {
             var buttonCode = update.CallbackQuery.Data;
             var chatId = update.CallbackQuery.Message.Chat.Id;
@@ -18,13 +21,13 @@ namespace BeatsSenderBot.Handlers
             if (buttonCode == "mailing")
             {
                 await botClient.SendTextMessageAsync(chatId, "Прикрепите файлы для рассылки");
-                EmailStateHelper.SaveEmailState(emailStateDic, chatId, EmailState.AwaitAttachments);
+                EmailStateHelper.SaveEmailState(emailStateDic, chatId, SendBeatsState.AwaitAttachments);
             }
 
             //Нажатие на кнопку "Отправить"
-            if (buttonCode == "sendAttachments" && emailState == EmailState.AwaitSendAttachments)
+            if (buttonCode == "sendAttachments" && emailState == SendBeatsState.AwaitSendAttachments)
             {
-                EmailHelper.SendAttachments(chatId);
+                SendBeatsHelper.SendBeats(chatId);
                 EmailStateHelper.ResetEmailState(emailStateDic, chatId);
                 await botClient.SendTextMessageAsync(chatId, "Письмо отправлено!");
                 KeyboardHelper.StartMessageButtons(botClient, chatId);
@@ -33,7 +36,7 @@ namespace BeatsSenderBot.Handlers
             //Нажатие на кнопку "Продолжить"
             if (buttonCode == "continue")
             {
-                EmailStateHelper.SaveEmailState(emailStateDic, chatId, EmailState.AwaitSendAttachments);
+                EmailStateHelper.SaveEmailState(emailStateDic, chatId, SendBeatsState.AwaitSendAttachments);
                 KeyboardHelper.SendEmailButtons(botClient, chatId);
             }
 

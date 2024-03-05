@@ -7,6 +7,9 @@ namespace BeatsSenderBot.Helpers
 {
     public static class AttachmentHelper
     {
+        /// <summary>
+        /// Сохранение входящих файлов
+        /// </summary>
         public static async Task SaveAttachmentFile(ITelegramBotClient botClient, Message message, MessageType messageType, string fileName)
         {
             var chatId = message.Chat.Id;
