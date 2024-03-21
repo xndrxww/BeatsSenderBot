@@ -1,5 +1,4 @@
 ﻿using BeatsSenderBot.Enums;
-using BeatsSenderBot.Handlers;
 using BeatsSenderBot.Helpers;
 using System.Text.Json;
 using Telegram.Bot;
@@ -7,7 +6,7 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace BeatsSenderBot
+namespace BeatsSenderBot.Handlers
 {
     public class UpdateHandler : IUpdateHandler
     {
@@ -33,7 +32,7 @@ namespace BeatsSenderBot
                     await AudioMessageHandler.HandleIncomingAudioMessage(update, botClient, emailStateDic);
                 }
 
-                //Обработка входящего документа со списком почт
+                //Обработка входящего файла со списком почт
                 if (message.Type == MessageType.Document)
                 {
                     await DocumentMessageHandler.HandleIncomingDocumentMessage(update, botClient);

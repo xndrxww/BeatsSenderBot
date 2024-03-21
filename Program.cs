@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using BeatsSenderBot.Handlers;
+using Telegram.Bot;
 using Telegram.Bot.Polling;
 
 namespace BeatsSenderBot
