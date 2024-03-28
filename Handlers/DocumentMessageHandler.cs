@@ -3,7 +3,7 @@ using BeatsSenderBot.Helpers;
 using BeatsSenderDb.Extensions;
 using BeatsSenderDb.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using System.Configuration;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -13,7 +13,7 @@ namespace BeatsSenderBot.Handlers
     public static class DocumentMessageHandler
     {
         /// <summary>
-        /// Обработка и сохранение в БД входящий файлов с почтами
+        /// Обработка и сохранение в БД входящих файлов с почтами
         /// </summary>
         public static async Task HandleIncomingDocumentMessage(Update update, ITelegramBotClient botClient)
         {
@@ -23,12 +23,7 @@ namespace BeatsSenderBot.Handlers
 
             await AttachmentHelper.SaveAttachmentFile(botClient, message, MessageType.Document, fileName);
 
-            //Тестовое решение (вынести в отдельный метод)
-            var config = new ConfigurationBuilder()
-                            .AddJsonFile("appsettings.json")
-                            .Build();
-
-            var connectionString = config.GetConnectionString("ConnectionString");
+            var connectionString = ConfigurationManager.AppSettings["ConnectionString"];
 
             var optionsBuilder = new DbContextOptionsBuilder<BeatsSenderDbContext>();
             optionsBuilder.UseNpgsql(connectionString);
